@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FitSwap: Buy and sell pre-loved fashion in Nigeria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #111111;
+            --paper: #FFFFFF;
+            --mist: #F5F5F5;
+            --line: #E3E3E3;
+            --soft: #5f5f5f;
+            --font: Inter, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            --pad: clamp(20px, 6vw, 88px)
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: var(--font);
+            color: var(--ink);
+            background: var(--paper);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--ink);
+            outline-offset: 3px
+        }
+
+        svg.defs {
+            position: absolute;
+            width: 0;
+            height: 0
+        }
+
+        .sym {
+            display: block
+        }
+
+        .lockup {
+            display: inline-flex;
+            align-items: center;
+            gap: .34em;
+            font-weight: 600;
+            letter-spacing: -.035em;
+            line-height: 1;
+            font-size: 26px
+        }
+
+        .lockup .sym {
+            height: .86em;
+            width: .86em
+        }
+
+        .announce {
+            background: var(--ink);
+            color: var(--paper);
+            text-align: center;
+            font-size: 13px;
+            padding: 9px var(--pad)
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(255, 255, 255, .96);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line)
+        }
+
+        .top {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            padding: 12px var(--pad)
+        }
+
+        .search {
+            position: relative;
+            flex: 1;
+            max-width: 520px;
+            margin-inline: auto
+        }
+
+        .search input {
+            width: 100%;
+            height: 44px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            background: var(--mist);
+            padding: 0 20px 0 48px;
+            font: inherit;
+            font-size: 15px;
+            color: var(--ink)
+        }
+
+        .search input:focus {
+            outline: none;
+            border-color: var(--ink);
+            background: var(--paper)
+        }
+
+        .search svg {
+            position: absolute;
+            left: 16px;
+            top: 12px;
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: var(--soft);
+            stroke-width: 1.8;
+            stroke-linecap: round
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: auto
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            position: relative
+        }
+
+        .icon-btn:hover {
+            background: var(--mist)
+        }
+
+        .icon-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: var(--ink);
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round
+        }
+
+        .icon-btn i {
+            position: absolute;
+            top: 6px;
+            right: 5px;
+            min-width: 17px;
+            height: 17px;
+            border-radius: 9px;
+            background: var(--ink);
+            color: var(--paper);
+            font: 500 11px/17px var(--font);
+            text-align: center;
+            font-style: normal;
+            padding: 0 4px
+        }
+
+        .actions .btn {
+            margin-left: 6px
+        }
+
+        .cats {
+            display: flex;
+            gap: 30px;
+            padding: 0 var(--pad);
+            overflow-x: auto;
+            scrollbar-width: none;
+            font-size: 15px
+        }
+
+        .cats::-webkit-scrollbar {
+            display: none
+        }
+
+        .cats a {
+            padding: 11px 0 12px;
+            white-space: nowrap;
+            color: var(--soft);
+            border-bottom: 2px solid transparent
+        }
+
+        .cats a:hover {
+            color: var(--ink);
+            border-color: var(--ink)
+        }
+
+        .cats a.sell {
+            margin-left: auto;
+            color: var(--ink);
+            font-weight: 500
+        }
+
+        section {
+            scroll-margin-top: 130px
+        }
+
+        .ph img,
+        .tile img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1
+        }
+
+        .ph .tag,
+        .tile .tag,
+        .ph .price-pill {
+            z-index: 2
+        }
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 18px
+        }
+
+        .cat {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-weight: 500;
+            font-size: 17px;
+            letter-spacing: -.01em
+        }
+
+        .cat .ph {
+            aspect-ratio: 1/1.15;
+            border-radius: 18px
+        }
+
+        .cat:hover .ph svg {
+            transform: scale(1.05)
+        }
+
+        .foot {
+            background: var(--ink);
+            color: #b5b5b5;
+            padding: 72px var(--pad) 32px;
+            font-size: 14px
+        }
+
+        .foot .cols {
+            display: grid;
+            grid-template-columns: 1.6fr repeat(4, 1fr);
+            gap: 40px
+        }
+
+        .foot h4 {
+            color: var(--paper);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 16px
+        }
+
+        .foot ul {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 10px
+        }
+
+        .foot a:hover {
+            color: var(--paper)
+        }
+
+        .foot .lockup {
+            color: var(--paper);
+            font-size: 24px;
+            margin-bottom: 16px
+        }
+
+        .foot .about {
+            max-width: 30ch;
+            line-height: 1.55
+        }
+
+        .foot .base {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            border-top: 1px solid #2a2a2a;
+            margin-top: 56px;
+            padding-top: 24px
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 48px;
+            padding: 0 26px;
+            border-radius: 999px;
+            font-weight: 500;
+            font-size: 15px;
+            border: 1px solid var(--ink);
+            transition: background .2s, color .2s
+        }
+
+        .btn.solid {
+            background: var(--ink);
+            color: var(--paper)
+        }
+
+        .btn.solid:hover {
+            background: #333
+        }
+
+        .btn.ghost:hover {
+            background: var(--ink);
+            color: var(--paper)
+        }
+
+        .btn.sm {
+            height: 40px;
+            padding: 0 20px
+        }
+
+        .btn.inv {
+            background: var(--paper);
+            color: var(--ink);
+            border-color: var(--paper)
+        }
+
+        .btn.inv:hover {
+            background: var(--mist)
+        }
+
+        .btn.inv-ghost {
+            color: var(--paper);
+            border-color: #555
+        }
+
+        .btn.inv-ghost:hover {
+            background: var(--paper);
+            color: var(--ink)
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 48px;
+            align-items: center;
+            padding: clamp(48px, 9vw, 120px) var(--pad);
+            min-height: calc(100vh - 73px)
+        }
+
+        h1 {
+            font-size: clamp(44px, 7vw, 100px);
+            font-weight: 600;
+            letter-spacing: -.045em;
+            line-height: .98
+        }
+
+        .hero p {
+            font-size: clamp(17px, 1.5vw, 20px);
+            color: var(--soft);
+            max-width: 42ch;
+            margin: 28px 0 36px
+        }
+
+        .cta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .collage {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 14px;
+            aspect-ratio: 1/1.08
+        }
+
+        .collage .ph:first-child {
+            grid-row: span 2
+        }
+
+        .ph {
+            position: relative;
+            border-radius: 22px;
+            overflow: hidden;
+            background: var(--mist)
+        }
+
+        .ph svg,
+        .tile svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            transition: transform .6s cubic-bezier(.2, .7, .2, 1)
+        }
+
+        .ph .tag,
+        .tile .tag {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            font-size: 13px;
+            font-weight: 500;
+            background: var(--paper);
+            padding: 5px 12px;
+            border-radius: 999px
+        }
+
+        .ph .price-pill {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            background: var(--ink);
+            color: var(--paper);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 999px
+        }
+
+        .band {
+            border-block: 1px solid var(--line);
+            padding: 22px var(--pad);
+            display: flex;
+            gap: 16px 56px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 15px;
+            color: var(--soft)
+        }
+
+        .band b {
+            color: var(--ink);
+            font-weight: 500
+        }
+
+        section {
+            padding: clamp(64px, 10vw, 140px) var(--pad)
+        }
+
+        h2 {
+            font-size: clamp(32px, 4.4vw, 60px);
+            font-weight: 600;
+            letter-spacing: -.04em;
+            line-height: 1.04;
+            max-width: 18ch
+        }
+
+        .head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 48px
+        }
+
+        .link {
+            font-size: 15px;
+            font-weight: 500;
+            border-bottom: 1px solid var(--ink);
+            padding-bottom: 2px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 36px 20px
+        }
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        .tile {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            aspect-ratio: 4/5;
+            background: var(--mist)
+        }
+
+        .item:hover .tile svg {
+            transform: scale(1.045)
+        }
+
+        .item h3 {
+            font-size: 17px;
+            font-weight: 500;
+            letter-spacing: -.01em
+        }
+
+        .item p {
+            font-size: 14px;
+            color: var(--soft)
+        }
+
+        .item .price {
+            font-weight: 600;
+            color: var(--ink);
+            font-size: 16px;
+            margin-top: 2px
+        }
+
+        .steps {
+            background: var(--mist)
+        }
+
+        .steps ol {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+            margin-top: 64px;
+            counter-reset: s
+        }
+
+        .steps li {
+            border-top: 2px solid var(--ink);
+            padding-top: 24px;
+            counter-increment: s
+        }
+
+        .steps li::before {
+            content: counter(s);
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 40px
+        }
+
+        .steps h3 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -.03em;
+            margin-bottom: 10px
+        }
+
+        .steps p {
+            color: var(--soft);
+            font-size: 16px;
+            max-width: 34ch
+        }
+
+        .trust {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 64px;
+            align-items: start
+        }
+
+        .trust dl {
+            display: grid;
+            gap: 0
+        }
+
+        .trust dt {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -.025em;
+            padding-top: 28px;
+            border-top: 1px solid var(--line)
+        }
+
+        .trust dd {
+            color: var(--soft);
+            padding: 8px 0 28px;
+            max-width: 46ch
+        }
+
+        .cities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 32px
+        }
+
+        .cities span {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 8px 18px;
+            font-size: 15px
+        }
+
+        .final {
+            background: var(--ink);
+            color: var(--paper);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px
+        }
+
+        .final .sym {
+            width: 72px;
+            height: 66px
+        }
+
+        .final h2 {
+            max-width: 14ch
+        }
+
+        .final p {
+            color: #b5b5b5;
+            max-width: 40ch
+        }
+
+
+        @media (max-width:900px) {
+
+            .search,
+            .actions .hide-m {
+                display: none
+            }
+
+            .cat-grid {
+                grid-template-columns: repeat(3, 1fr)
+            }
+
+            .foot .cols {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .foot .cols>div:first-child {
+                grid-column: 1/-1
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                min-height: 0
+            }
+
+            .collage {
+                aspect-ratio: 1/1
+            }
+
+            .grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .steps ol,
+            .trust {
+                grid-template-columns: 1fr;
+                gap: 40px
+            }
+        }
+
+        .icon-btn {
+            border: 0;
+            background: none;
+            padding: 0;
+            cursor: pointer;
+            color: inherit
+        }
+
+        .burger {
+            display: none;
+            margin-left: -10px
+        }
+
+        body.lock {
+            overflow: hidden
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(17, 17, 17, .5);
+            opacity: 0;
+            transition: opacity .3s;
+            z-index: 40
+        }
+
+        .overlay.on {
+            opacity: 1
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: min(88vw, 400px);
+            background: var(--paper);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 16px 20px 24px;
+            overflow-y: auto;
+            visibility: hidden;
+            transition: transform .38s cubic-bezier(.2, .7, .2, 1), visibility 0s .38s;
+            outline: none
+        }
+
+        .drawer.left {
+            left: 0;
+            transform: translateX(-100%)
+        }
+
+        .drawer.right {
+            right: 0;
+            transform: translateX(100%)
+        }
+
+        .drawer.on {
+            transform: none;
+            visibility: visible;
+            transition: transform .38s cubic-bezier(.2, .7, .2, 1), visibility 0s
+        }
+
+        .d-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 18px
+        }
+
+        .d-head .icon-btn {
+            margin-right: -10px
+        }
+
+        .drawer .search {
+            max-width: none;
+            margin: 0
+        }
+
+        .d-links {
+            display: grid
+        }
+
+        .d-links a {
+            font-size: 30px;
+            font-weight: 600;
+            letter-spacing: -.035em;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .d-sub {
+            display: grid;
+            gap: 4px;
+            margin-top: 4px
+        }
+
+        .d-sub a {
+            padding: 10px 0;
+            color: var(--soft);
+            font-size: 17px
+        }
+
+        .d-foot {
+            margin-top: auto;
+            display: grid;
+            gap: 12px
+        }
+
+        .bag-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 20px;
+            overflow-y: auto
+        }
+
+        .bag-list li {
+            display: grid;
+            grid-template-columns: 84px 1fr;
+            gap: 16px;
+            align-items: center
+        }
+
+        .thumb {
+            aspect-ratio: 4/5;
+            border-radius: 12px;
+            overflow: hidden
+        }
+
+        .thumb svg {
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        .bag-list h3 {
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: -.01em
+        }
+
+        .bag-list p {
+            font-size: 14px;
+            color: var(--soft)
+        }
+
+        .bag-list b {
+            display: block;
+            margin-top: 4px
+        }
+
+        .sub {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--line)
+        }
+
+        .d-foot p {
+            font-size: 14px;
+            color: var(--soft)
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+
+            .drawer,
+            .drawer.on,
+            .overlay {
+                transition: none
+            }
+        }
+
+        @media (max-width:900px) {
+            .burger {
+                display: grid
+            }
+
+            .cats {
+                display: none
+            }
+
+            section {
+                scroll-margin-top: 80px
+            }
+
+            .top {
+                gap: 8px;
+                padding: 8px var(--pad)
+            }
+
+            .top>.lockup {
+                font-size: 23px
+            }
+
+            .hero {
+                padding-top: 40px
+            }
+
+            .head {
+                margin-bottom: 32px
+            }
+        }
+
+        @media (max-width:560px) {
+            :root {
+                --pad: 20px
+            }
+
+            .announce {
+                font-size: 12px;
+                padding: 8px 16px
+            }
+
+            .actions .btn.sm {
+                height: 38px;
+                padding: 0 18px
+            }
+
+            .hero .cta .btn {
+                flex: 1 1 100%
+            }
+
+            .collage {
+                gap: 10px
+            }
+
+            .ph {
+                border-radius: 16px
+            }
+
+            .grid {
+                gap: 28px 12px
+            }
+
+            .item h3 {
+                font-size: 15px
+            }
+
+            .item p {
+                font-size: 13px
+            }
+
+            .cat-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px
+            }
+
+            .band {
+                flex-direction: column;
+                gap: 8px
+            }
+
+            .steps ol {
+                margin-top: 40px
+            }
+
+            .steps li::before {
+                margin-bottom: 20px
+            }
+
+            .foot .cols {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .final .cta .btn {
+                flex: 1 1 100%
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <svg class="defs" aria-hidden="true">
+        <symbol id="mark" viewBox="2 6 96 88">
+            <path fill="currentColor" d="M2 46A40 40 0 0 1 82 46Z" />
+            <path fill="currentColor" d="M18 54A40 40 0 0 0 98 54Z" />
+        </symbol>
+        <symbol id="g-jacket" viewBox="0 0 400 500">
+            <path fill="var(--c)"
+                d="M135 95L170 78 200 100 230 78 265 95 330 125 352 340 312 346 302 210 296 428H104L98 210 88 346 48 340 70 125Z" />
+            <path fill="var(--l)" d="M170 78L200 118 230 78 252 92 200 150 148 92Z" />
+            <g fill="none" stroke="var(--d)" stroke-width="3" stroke-linejoin="round">
+                <path d="M200 118V428M104 395H296" />
+                <rect x="128" y="238" width="54" height="46" rx="4" />
+                <rect x="218" y="238" width="54" height="46" rx="4" />
+            </g>
+            <g fill="var(--d)">
+                <circle cx="200" cy="175" r="5" />
+                <circle cx="200" cy="235" r="5" />
+                <circle cx="200" cy="295" r="5" />
+                <circle cx="200" cy="355" r="5" />
+            </g>
+        </symbol>
+        <symbol id="g-trousers" viewBox="0 0 400 500">
+            <path fill="var(--c)" d="M122 70H278L304 448H214L200 190 186 448H96Z" />
+            <rect x="122" y="70" width="156" height="26" fill="var(--d)" />
+            <g fill="none" stroke="var(--d)" stroke-width="3" stroke-linecap="round">
+                <path d="M200 96V190M132 104Q160 148 166 176M268 104Q240 148 234 176" />
+                <path stroke="var(--l)" d="M152 240L142 436M248 240L258 436" />
+            </g>
+            <circle cx="200" cy="83" r="5" fill="var(--l)" />
+        </symbol>
+        <symbol id="g-bag" viewBox="0 0 400 500">
+            <path d="M128 215C118 60 282 60 272 215" fill="none" stroke="var(--d)" stroke-width="14"
+                stroke-linecap="round" />
+            <rect x="80" y="205" width="240" height="190" rx="22" fill="var(--c)" />
+            <path fill="var(--d)" d="M80 227a22 22 0 0 1 22-22H298a22 22 0 0 1 22 22V252Q200 335 80 252Z" />
+            <circle cx="200" cy="296" r="11" fill="var(--l)" />
+            <path d="M98 370H302" stroke="var(--l)" stroke-width="3" stroke-dasharray="8 8" fill="none" />
+        </symbol>
+        <symbol id="g-dress" viewBox="0 0 400 500">
+            <path fill="var(--c)"
+                d="M150 62L178 50 200 84 222 50 250 62 290 100 268 148 252 132 258 205 318 450H82L142 205 148 132 132 148 110 100Z" />
+            <path fill="var(--l)" d="M178 50L200 84 222 50 236 58 200 120 164 58Z" />
+            <rect x="141" y="198" width="118" height="16" fill="var(--d)" />
+            <path d="M200 120V450" stroke="var(--d)" stroke-width="3" fill="none" />
+            <g fill="var(--l)">
+                <circle cx="200" cy="150" r="4.5" />
+                <circle cx="200" cy="182" r="4.5" />
+                <circle cx="200" cy="250" r="4.5" />
+                <circle cx="200" cy="300" r="4.5" />
+                <circle cx="200" cy="350" r="4.5" />
+                <circle cx="200" cy="400" r="4.5" />
+            </g>
+        </symbol>
+        <symbol id="g-sneaker" viewBox="0 0 400 500">
+            <g transform="translate(-34 -130) scale(1.15)">
+                <path fill="var(--c)"
+                    d="M48 335C48 292 84 284 118 268L168 240C186 230 204 240 210 254 220 278 256 288 304 294 348 300 358 322 358 352V372H48Z" />
+                <g fill="none" stroke="var(--d)" stroke-width="5" stroke-linecap="round">
+                    <path d="M150 262L174 282M166 250L190 270M184 242L206 260" />
+                    <path d="M174 316L204 346M194 308L224 338M214 304L242 332" />
+                </g>
+                <rect x="40" y="352" width="326" height="32" rx="16" fill="var(--l)" stroke="var(--d)"
+                    stroke-width="3" />
+                <path d="M48 300C48 292 60 288 70 290V336H48Z" fill="var(--d)" />
+            </g>
+        </symbol>
+        <symbol id="g-hoodie" viewBox="0 0 400 500">
+            <path fill="var(--c)"
+                d="M142 92C140 40 260 40 258 92L332 132 354 345 308 352 298 235 292 440H108L102 235 92 352 46 345 68 132Z" />
+            <path fill="var(--d)" d="M162 88C168 130 232 130 238 88 228 64 172 64 162 88Z" />
+            <g fill="none" stroke="var(--l)" stroke-width="4" stroke-linecap="round">
+                <path d="M186 120V192M214 120V192" />
+            </g>
+            <g fill="none" stroke="var(--d)" stroke-width="3" stroke-linejoin="round">
+                <path d="M132 335H268L284 402H116Z" />
+                <path d="M108 422H292" />
+            </g>
+        </symbol>
+        <symbol id="g-shirt" viewBox="0 0 400 500">
+            <path fill="var(--c)" d="M140 72Q200 112 260 72L338 112 312 180 276 158V440H124V158L88 180 62 112Z" />
+            <g fill="var(--l)" stroke="var(--d)" stroke-width="3" stroke-linejoin="round">
+                <path d="M146 66L200 118 176 142 128 96Z" />
+                <path d="M254 66L200 118 224 142 272 96Z" />
+            </g>
+            <path d="M200 118V440" stroke="var(--d)" stroke-width="3" fill="none" />
+            <g fill="var(--d)">
+                <circle cx="200" cy="175" r="4" />
+                <circle cx="200" cy="235" r="4" />
+                <circle cx="200" cy="295" r="4" />
+                <circle cx="200" cy="355" r="4" />
+            </g>
+        </symbol>
+        <symbol id="g-skirt" viewBox="0 0 400 500">
+            <path fill="var(--c)" d="M132 96H268L338 450H62Z" />
+            <rect x="132" y="96" width="136" height="24" fill="var(--d)" />
+            <path d="M158 120L88 450M179 120L148 450M200 120V450M221 120L252 450M242 120L312 450" stroke="var(--d)"
+                stroke-width="3" fill="none" />
+        </symbol>
+    </svg>
+
+    <div class="announce">New sellers list their first piece free. Pickup and delivery available across Nigeria.</div>
+    <header>
+        <div class="top">
+            <button class="icon-btn burger" type="button" data-open="menu" aria-label="Open menu" aria-expanded="false"
+                aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16M4 12h16M4 17h16" />
+                </svg></button>
+            <a href="#" class="lockup" aria-label="FitSwap home"><svg class="sym">
+                    <use href="#mark" />
+                </svg><span>FitSwap</span></a>
+            <form class="search" role="search" onsubmit="return false"><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M20 20l-3.5-3.5" />
+                </svg><input type="search" placeholder="Search for jackets, sneakers, Ankara and more"
+                    aria-label="Search FitSwap"></form>
+            <div class="actions">
+                <a href="#" class="icon-btn hide-m" aria-label="Saved items"><svg viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10z" />
+                    </svg></a>
+                <button class="icon-btn" type="button" data-open="cart" aria-label="Open bag, 2 items"
+                    aria-expanded="false" aria-controls="cart"><svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 8h14l-1 12H6L5 8z" />
+                        <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+                    </svg><i>2</i></button>
+                <a href="#" class="btn ghost sm hide-m">Sign in</a>
+                <a href="#join" class="btn solid sm">Sell</a>
+            </div>
+        </div>
+        <nav class="cats" aria-label="Categories">
+            <a href="#shop">New in</a><a href="#categories">Women</a><a href="#categories">Men</a><a
+                href="#categories">Vintage</a><a href="#categories">Sneakers</a><a href="#categories">Bags</a><a
+                href="#categories">Designer</a><a href="#how">How it works</a><a href="#trust">Trust and safety</a><a
+                href="#join" class="sell">Download the app</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero">
+            <div>
+                <h1>Wear it. Swap it. Wear it again.</h1>
+                <p>Nigeria’s marketplace for pre-loved, vintage and one-of-one fashion. Sell what you’ve outgrown. Find
+                    what no one else is wearing.</p>
+                <div class="cta">
+                    <a href="#join" class="btn solid">Start shopping</a>
+                    <a href="#join" class="btn ghost">Sell your first piece</a>
+                </div>
+            </div>
+            <div class="collage">
+                <div class="ph"><img src="images/jacket.avif" alt="" loading="lazy" onerror="this.remove()"><svg
+                        viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                        aria-label="Product photo placeholder">
+                        <rect width="400" height="500" fill="#E6E2DB" />
+                        <use href="#g-jacket" width="400" height="500" style="--c:#4D6A8F;--d:#2F4562;--l:#6F8FB6" />
+                    </svg><span class="tag">Vintage</span><span class="price-pill">₦28,500</span></div>
+                <div class="ph"><img src="images/bag.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                        viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                        aria-label="Product photo placeholder">
+                        <rect width="400" height="500" fill="#E9E3DA" />
+                        <use href="#g-bag" width="400" height="500" style="--c:#B07F52;--d:#6E4A2A;--l:#EBD7B5" />
+                    </svg></div>
+                <div class="ph"><img src="images/sneaker.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                        viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                        aria-label="Product photo placeholder">
+                        <rect width="400" height="500" fill="#DADCDD" />
+                        <use href="#g-sneaker" width="400" height="500" style="--c:#F1F1EF;--d:#1B1B1B;--l:#FFFFFF" />
+                    </svg></div>
+            </div>
+        </div>
+
+        <div class="band">
+            <span><b>Payment held</b> until your order arrives</span>
+            <span><b>Verified</b> sellers</span>
+            <span><b>Delivery</b> across Nigeria</span>
+            <span><b>Pay</b> in naira, by card or transfer</span>
+        </div>
+
+        <section id="shop">
+            <div class="head">
+                <h2>New this week, from wardrobes near you.</h2>
+                <a href="#join" class="link">Browse all pieces</a>
+            </div>
+            <div class="grid">
+                <a href="#join" class="item">
+                    <div class="tile"><img src="images/jacket.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                            aria-label="Product photo placeholder">
+                            <rect width="400" height="500" fill="#E6E2DB" />
+                            <use href="#g-jacket" width="400" height="500"
+                                style="--c:#4D6A8F;--d:#2F4562;--l:#6F8FB6" />
+                        </svg><span class="tag">Vintage</span></div>
+                    <div>
+                        <h3>90s oversized denim jacket</h3>
+                        <p>Size M · Lekki, Lagos</p>
+                        <div class="price">₦28,500</div>
+                    </div>
+                </a>
+                <a href="#join" class="item">
+                    <div class="tile"><img src="images/trousers.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                            aria-label="Product photo placeholder">
+                            <rect width="400" height="500" fill="#DCDDDB" />
+                            <use href="#g-trousers" width="400" height="500"
+                                style="--c:#2E2E30;--d:#131314;--l:#5A5A5E" />
+                        </svg><span class="tag">Like new</span></div>
+                    <div>
+                        <h3>Tailored wool-blend trousers</h3>
+                        <p>Size 32 · Wuse, Abuja</p>
+                        <div class="price">₦19,000</div>
+                    </div>
+                </a>
+                <a href="#join" class="item">
+                    <div class="tile"><img src="images/bag.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                            aria-label="Product photo placeholder">
+                            <rect width="400" height="500" fill="#E9E3DA" />
+                            <use href="#g-bag" width="400" height="500" style="--c:#B07F52;--d:#6E4A2A;--l:#EBD7B5" />
+                        </svg><span class="tag">Designer</span></div>
+                    <div>
+                        <h3>Leather crossbody bag</h3>
+                        <p>One size · Ikeja, Lagos</p>
+                        <div class="price">₦64,000</div>
+                    </div>
+                </a>
+                <a href="#join" class="item">
+                    <div class="tile"><img src="images/dress.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                            aria-label="Product photo placeholder">
+                            <rect width="400" height="500" fill="#E4DDD6" />
+                            <use href="#g-dress" width="400" height="500" style="--c:#B4552F;--d:#7A3418;--l:#EBCDA4" />
+                        </svg><span class="tag">Pre-loved</span></div>
+                    <div>
+                        <h3>Ankara-print shirt dress</h3>
+                        <p>Size 12 · GRA, Port Harcourt</p>
+                        <div class="price">₦15,500</div>
+                    </div>
+                </a>
+                <a href="#join" class="item">
+                    <div class="tile"><img src="images/sneaker.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                            aria-label="Product photo placeholder">
+                            <rect width="400" height="500" fill="#DADCDD" />
+                            <use href="#g-sneaker" width="400" height="500"
+                                style="--c:#F1F1EF;--d:#1B1B1B;--l:#FFFFFF" />
+                        </svg><span class="tag">Barely worn</span></div>
+                    <div>
+                        <h3>Retro low-top sneakers</h3>
+                        <p>EU 42 · Yaba, Lagos</p>
+                        <div class="price">₦32,000</div>
+                    </div>
+                </a>
+                <a href="#join" class="item">
+                    <div class="tile"><img src="images/hoodie.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                            aria-label="Product photo placeholder">
+                            <rect width="400" height="500" fill="#E4E6E1" />
+                            <use href="#g-hoodie" width="400" height="500"
+                                style="--c:#8E9A88;--d:#5E6A59;--l:#E6EBE0" />
+                        </svg><span class="tag">Pre-loved</span></div>
+                    <div>
+                        <h3>Heavyweight cotton hoodie</h3>
+                        <p>Size L · Bodija, Ibadan</p>
+                        <div class="price">₦14,000</div>
+                    </div>
+                </a>
+                <a href="#join" class="item">
+                    <div class="tile"><img src="images/shirt.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                            aria-label="Product photo placeholder">
+                            <rect width="400" height="500" fill="#CFD3D6" />
+                            <use href="#g-shirt" width="400" height="500" style="--c:#F4F4F2;--d:#B4B4AE;--l:#E6E6E2" />
+                        </svg><span class="tag">Like new</span></div>
+                    <div>
+                        <h3>Crisp white poplin shirt</h3>
+                        <p>Size S · Maitama, Abuja</p>
+                        <div class="price">₦9,500</div>
+                    </div>
+                </a>
+                <a href="#join" class="item">
+                    <div class="tile"><img src="images/skirt.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img"
+                            aria-label="Product photo placeholder">
+                            <rect width="400" height="500" fill="#E9E6E1" />
+                            <use href="#g-skirt" width="400" height="500" style="--c:#3C3F36;--d:#22241E;--l:#5A5E50" />
+                        </svg><span class="tag">Vintage</span></div>
+                    <div>
+                        <h3>Pleated midi skirt</h3>
+                        <p>Size 10 · GRA, Enugu</p>
+                        <div class="price">₦12,500</div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section id="categories">
+            <div class="head">
+                <h2>Shop by category.</h2><a href="#shop" class="link">See everything</a>
+            </div>
+            <div class="cat-grid"><a href="#shop" class="cat">
+                    <div class="ph"><img src="images/cat-women.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                            <rect width="400" height="500" fill="#E4DDD6" />
+                            <use href="#g-dress" width="400" height="500" style="--c:#B4552F;--d:#7A3418;--l:#EBCDA4" />
+                        </svg></div>Women
+                </a><a href="#shop" class="cat">
+                    <div class="ph"><img src="images/cat-men.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                            <rect width="400" height="500" fill="#CFD3D6" />
+                            <use href="#g-shirt" width="400" height="500" style="--c:#F4F4F2;--d:#B4B4AE;--l:#E6E6E2" />
+                        </svg></div>Men
+                </a><a href="#shop" class="cat">
+                    <div class="ph"><img src="images/cat-vintage.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                            <rect width="400" height="500" fill="#E6E2DB" />
+                            <use href="#g-jacket" width="400" height="500"
+                                style="--c:#4D6A8F;--d:#2F4562;--l:#6F8FB6" />
+                        </svg></div>Vintage
+                </a><a href="#shop" class="cat">
+                    <div class="ph"><img src="images/cat-sneakers.jpg" alt="" loading="lazy"
+                            onerror="this.remove()"><svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"
+                            aria-hidden="true">
+                            <rect width="400" height="500" fill="#DADCDD" />
+                            <use href="#g-sneaker" width="400" height="500"
+                                style="--c:#F1F1EF;--d:#1B1B1B;--l:#FFFFFF" />
+                        </svg></div>Sneakers
+                </a><a href="#shop" class="cat">
+                    <div class="ph"><img src="images/cat-bags.jpg" alt="" loading="lazy" onerror="this.remove()"><svg
+                            viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                            <rect width="400" height="500" fill="#E9E3DA" />
+                            <use href="#g-bag" width="400" height="500" style="--c:#B07F52;--d:#6E4A2A;--l:#EBD7B5" />
+                        </svg></div>Bags
+                </a><a href="#shop" class="cat">
+                    <div class="ph"><img src="images/cat-designer.jpg" alt="" loading="lazy"
+                            onerror="this.remove()"><svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"
+                            aria-hidden="true">
+                            <rect width="400" height="500" fill="#DCDDDB" />
+                            <use href="#g-trousers" width="400" height="500"
+                                style="--c:#2E2E30;--d:#131314;--l:#5A5A5E" />
+                        </svg></div>Designer
+                </a></div>
+        </section>
+
+        <section class="steps" id="how">
+            <h2>Sell in minutes. Buy with confidence.</h2>
+            <ol>
+                <li>
+                    <h3>List it</h3>
+                    <p>Take three photos, set your price and publish. We suggest a fair price based on similar pieces.
+                    </p>
+                </li>
+                <li>
+                    <h3>Swap it</h3>
+                    <p>A buyer pays through FitSwap. We hold the money while you ship, so neither side takes a risk.</p>
+                </li>
+                <li>
+                    <h3>Get paid</h3>
+                    <p>Once the buyer confirms the piece arrived as described, your money goes straight to your bank
+                        account.</p>
+                </li>
+            </ol>
+        </section>
+
+        <section class="trust" id="trust">
+            <div>
+                <h2>Built so that you can trust the swap.</h2>
+                <div class="cities" aria-label="Cities served"><span>Lagos</span><span>Abuja</span><span>Port
+                        Harcourt</span><span>Ibadan</span><span>Enugu</span><span>Kano</span></div>
+            </div>
+            <dl>
+                <dt>Your money is protected</dt>
+                <dd>Buyers pay FitSwap, not the seller. Funds are released only when the order is confirmed.</dd>
+                <dt>Real people, real wardrobes</dt>
+                <dd>Sellers verify their phone number and ID, and every profile shows reviews from past buyers.</dd>
+                <dt>Delivery handled</dt>
+                <dd>Book pickup and delivery in the app, with tracking from the seller’s door to yours.</dd>
+                <dt>Fashion that lasts longer</dt>
+                <dd>Every piece that changes hands is one less new garment made, and one more outfit with a second life.
+                </dd>
+            </dl>
+        </section>
+
+        <section class="final" id="join">
+            <svg class="sym" aria-hidden="true">
+                <use href="#mark" />
+            </svg>
+            <h2>Your next favourite piece is already out there.</h2>
+            <p>Download FitSwap and make your first swap today.</p>
+            <div class="cta" style="justify-content:center">
+                <a href="#" class="btn inv">Download for iPhone</a>
+                <a href="#" class="btn inv-ghost btn">Download for Android</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="foot">
+        <div class="cols">
+            <div><a href="#" class="lockup" aria-label="FitSwap"><svg class="sym">
+                        <use href="#mark" />
+                    </svg><span>FitSwap</span></a>
+                <p class="about">Nigeria’s marketplace for pre-loved, vintage and one-of-one fashion.</p>
+            </div>
+            <div>
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="#shop">New in</a></li>
+                    <li><a href="#categories">Women</a></li>
+                    <li><a href="#categories">Men</a></li>
+                    <li><a href="#categories">Vintage</a></li>
+                    <li><a href="#categories">Designer</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Sell</h4>
+                <ul>
+                    <li><a href="#join">Start selling</a></li>
+                    <li><a href="#how">How it works</a></li>
+                    <li><a href="#">Seller guide</a></li>
+                    <li><a href="#">Fees</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Sustainability</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help centre</a></li>
+                    <li><a href="#trust">Trust and safety</a></li>
+                    <li><a href="#">Contact us</a></li>
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">Privacy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="base"><span>© 2026 FitSwap. Lagos, Nigeria.</span><span>Instagram · TikTok · X · WhatsApp</span>
+        </div>
+    </footer>
+
+
+    <div class="overlay" id="overlay" data-close hidden></div>
+
+    <aside class="drawer left" id="menu" aria-label="Menu" aria-hidden="true" tabindex="-1">
+        <div class="d-head"><a href="#" class="lockup" aria-label="FitSwap home" data-close><svg class="sym">
+                    <use href="#mark" />
+                </svg><span>FitSwap</span></a><button class="icon-btn" type="button" data-close aria-label="Close"><svg
+                    viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" />
+                </svg></button></div>
+        <form class="search" role="search" onsubmit="return false"><svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20l-3.5-3.5" />
+            </svg><input type="search" placeholder="Search FitSwap" aria-label="Search FitSwap"></form>
+        <nav class="d-links" aria-label="Mobile categories">
+            <a href="#shop" data-close>New in</a><a href="#categories" data-close>Women</a><a href="#categories"
+                data-close>Men</a><a href="#categories" data-close>Vintage</a><a href="#categories"
+                data-close>Sneakers</a><a href="#categories" data-close>Bags</a><a href="#categories"
+                data-close>Designer</a>
+        </nav>
+        <nav class="d-sub" aria-label="More">
+            <a href="#how" data-close>How it works</a><a href="#trust" data-close>Trust and safety</a><a href="#join"
+                data-close>Download the app</a>
+        </nav>
+        <div class="d-foot"><a href="#" class="btn ghost">Sign in</a><a href="#join" class="btn solid" data-close>Sell
+                on FitSwap</a></div>
+    </aside>
+
+    <aside class="drawer right" id="cart" aria-label="Your bag" aria-hidden="true" tabindex="-1">
+        <div class="d-head"><strong>Your bag (2)</strong><button class="icon-btn" type="button" data-close
+                aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" />
+                </svg></button></div>
+        <ul class="bag-list">
+            <li>
+                <div class="thumb"><svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                        <rect width="400" height="500" fill="#E6E2DB" />
+                        <use href="#g-jacket" width="400" height="500" style="--c:#4D6A8F;--d:#2F4562;--l:#6F8FB6" />
+                    </svg></div>
+                <div>
+                    <h3>90s oversized denim jacket</h3>
+                    <p>Size M · Lekki, Lagos</p><b>₦28,500</b>
+                </div>
+            </li>
+            <li>
+                <div class="thumb"><svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                        <rect width="400" height="500" fill="#DCDDDB" />
+                        <use href="#g-trousers" width="400" height="500" style="--c:#2E2E30;--d:#131314;--l:#5A5A5E" />
+                    </svg></div>
+                <div>
+                    <h3>Tailored wool-blend trousers</h3>
+                    <p>Size 32 · Wuse, Abuja</p><b>₦19,000</b>
+                </div>
+            </li>
+        </ul>
+        <div class="d-foot">
+            <div class="sub"><span>Subtotal</span><b>₦47,500</b></div>
+            <p>Your payment is held until your order arrives as described.</p>
+            <a href="#" class="btn solid">Checkout</a>
+        </div>
+    </aside>
+
+    <script>
+        (function () {
+            var ov = document.getElementById("overlay"), open = null, last = null;
+            var focusables = "a[href],button,input";
+            function show(id, trigger) {
+                var d = document.getElementById(id); if (!d) return;
+                if (open) hide(true);
+                open = d; last = trigger || document.activeElement;
+                ov.hidden = false; requestAnimationFrame(function () { ov.classList.add("on"); d.classList.add("on") });
+                d.setAttribute("aria-hidden", "false"); document.body.classList.add("lock");
+                document.querySelectorAll("[data-open=\"" + id + "\"]").forEach(function (b) { b.setAttribute("aria-expanded", "true") });
+                setTimeout(function () { var f = d.querySelector("[data-close]"); (f || d).focus() }, 60);
+            }
+            function hide(quick) {
+                if (!open) return; var d = open; open = null;
+                d.classList.remove("on"); ov.classList.remove("on"); d.setAttribute("aria-hidden", "true");
+                document.body.classList.remove("lock");
+                document.querySelectorAll("[data-open]").forEach(function (b) { b.setAttribute("aria-expanded", "false") });
+                setTimeout(function () { if (!open) ov.hidden = true }, quick ? 0 : 350);
+                if (last && !quick) last.focus();
+            }
+            document.addEventListener("click", function (e) {
+                var o = e.target.closest("[data-open]"); if (o) { e.preventDefault(); show(o.getAttribute("data-open"), o); return }
+                if (e.target.closest("[data-close]")) hide();
+            });
+            document.addEventListener("keydown", function (e) {
+                if (!open) return;
+                if (e.key === "Escape") { hide(); return }
+                if (e.key === "Tab") {
+                    var f = [].slice.call(open.querySelectorAll(focusables)); if (!f.length) return;
+                    var a = f[0], z = f[f.length - 1];
+                    if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus() }
+                    else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus() }
+                }
+            });
+            window.matchMedia("(min-width:901px)").addEventListener("change", function (m) { if (m.matches && open && open.id === "menu") hide(true) });
+        })();
+    </script>
+</body>
+
+</html>
